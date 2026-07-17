@@ -3,7 +3,8 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/ui',
     '@vueuse/nuxt',
-    'nuxt-auth-utils'
+    'nuxt-auth-utils',
+    '@vueuse/motion'
   ],
 
   devtools: {

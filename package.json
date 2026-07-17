@@ -21,6 +21,7 @@
     "@unovis/ts": "^1.6.6",
     "@unovis/vue": "^1.6.6",
     "@vueuse/core": "^14.3.0",
+    "@vueuse/motion": "^3.0.3",
     "@vueuse/nuxt": "^14.3.0",
     "bcrypt": "^6.0.0",
     "date-fns": "^4.4.0",
