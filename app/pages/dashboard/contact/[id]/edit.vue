@@ -1,0 +1,144 @@
+<script setup>
+definePageMeta({
+  layout: 'dashboard',
+  middleware: 'auth',
+})
+
+const route = useRoute()
+const id = route.params.id
+
+const platformOptions = [
+  { label: 'Instagram', value: 'Instagram', icon: 'i-simple-icons-instagram' },
+  { label: 'GitHub', value: 'GitHub', icon: 'i-simple-icons-github' },
+  { label: 'WhatsApp', value: 'WhatsApp', icon: 'i-simple-icons-whatsapp' },
+  { label: 'Email', value: 'Email', icon: 'i-lucide-mail' },
+  { label: 'LinkedIn', value: 'LinkedIn', icon: 'i-simple-icons-linkedin' },
+  { label: 'TikTok', value: 'TikTok', icon: 'i-simple-icons-tiktok' },
+  { label: 'YouTube', value: 'YouTube', icon: 'i-simple-icons-youtube' },
+  { label: 'X (Twitter)', value: 'X', icon: 'i-simple-icons-x' },
+  { label: 'Facebook', value: 'Facebook', icon: 'i-simple-icons-facebook' },
+]
+
+const { data: contact } = await useFetch(`/api/contact`, {
+  transform: (list) => list.find((c) => c.id === Number(id)),
+})
+
+const form = reactive({
+  icon: '',
+  apk: '',
+  link: '',
+  decs: '',
+})
+
+const selectedPlatform = ref(null)
+
+watchEffect(() => {
+  if (contact.value) {
+    form.icon = contact.value.icon
+    form.apk = contact.value.apk
+    form.link = contact.value.link
+    form.decs = contact.value.decs
+
+    // Cari platform yang cocok buat pre-select dropdown
+    const matched = platformOptions.find((p) => p.value === contact.value.apk)
+    if (matched) selectedPlatform.value = matched
+  }
+})
+
+watch(selectedPlatform, (platform) => {
+  if (platform) {
+    form.icon = platform.icon
+    form.apk = platform.value
+  }
+})
+
+const isSaving = ref(false)
+const toast = useToast()
+
+function cleanForm(data) {
+  const cleaned = { ...data }
+  for (const key in cleaned) {
+    if (cleaned[key] === '') {
+      cleaned[key] = null
+    }
+  }
+  return cleaned
+}
+
+async function handleSubmit() {
+  if (!form.icon || !form.apk || !form.link) {
+    toast.add({ title: 'Mohon lengkapi semua field yang wajib diisi', color: 'error' })
+    return
+  }
+
+  isSaving.value = true
+  try {
+    await $fetch(`/api/contact/${id}`, {
+      method: 'PUT',
+      body: cleanForm(form),
+    })
+    toast.add({ title: 'Berhasil diperbarui!', color: 'success' })
+    await navigateTo('/dashboard/contact')
+  } catch (error) {
+    toast.add({ title: 'Gagal memperbarui', color: 'error' })
+  } finally {
+    isSaving.value = false
+  }
+}
+</script>
+
+<template>
+  <UDashboardPanel id="contact-edit">
+    <template #header>
+      <UDashboardNavbar title="Edit Contact">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
+      </UDashboardNavbar>
+    </template>
+
+    <template #body>
+      <form @submit.prevent="handleSubmit" class="max-w-xl flex flex-col gap-4">
+        <UFormField label="Pilih Platform" required>
+          <USelectMenu
+            v-model="selectedPlatform"
+            :items="platformOptions"
+            placeholder="Pilih platform..."
+            class="w-full"
+          >
+            <template #leading="{ modelValue }">
+              <UIcon v-if="modelValue" :name="modelValue.icon" />
+            </template>
+            <template #item-leading="{ item }">
+              <UIcon :name="item.icon" />
+            </template>
+          </USelectMenu>
+        </UFormField>
+
+        <UFormField label="Preview Icon">
+          <div class="flex items-center gap-2 text-sm text-gray-500">
+            <UIcon v-if="form.icon" :name="form.icon" class="text-xl" />
+            <span>{{ form.icon || 'Belum dipilih' }}</span>
+          </div>
+        </UFormField>
+
+        <UFormField label="Platform (nama tampil)" required>
+          <UInput v-model="form.apk" class="w-full" placeholder="Instagram" />
+        </UFormField>
+
+        <UFormField label="Link" required>
+          <UInput v-model="form.link" class="w-full" placeholder="https://instagram.com/username" />
+        </UFormField>
+
+        <UFormField label="Deskripsi">
+          <UInput v-model="form.decs" class="w-full" />
+        </UFormField>
+
+        <div class="flex gap-3">
+          <UButton type="submit" :loading="isSaving">Simpan Perubahan</UButton>
+          <UButton to="/dashboard/contact" color="neutral" variant="outline">Batal</UButton>
+        </div>
+      </form>
+    </template>
+  </UDashboardPanel>
+</template>

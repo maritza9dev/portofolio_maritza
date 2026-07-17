@@ -1,0 +1,124 @@
+<script setup>
+definePageMeta({
+  layout: 'dashboard',
+  middleware: 'auth',
+})
+
+const typeOptions = ['FullTime', 'Internship', 'Training']
+
+const form = reactive({
+  type: '',
+  title: '',
+  institution: '',
+  description: '',
+  year_start: '',
+  year_end: '',
+  certificate: '',
+  is_current: false,
+})
+
+const isSaving = ref(false)
+const toast = useToast()
+
+function cleanForm(data) {
+  const cleaned = { ...data }
+  for (const key in cleaned) {
+    if (cleaned[key] === '') {
+      cleaned[key] = null
+    }
+  }
+  return cleaned
+}
+
+async function handleSubmit() {
+  if (!form.type || !form.title || !form.institution || !form.year_start || !form.certificate) {
+    toast.add({ title: 'Mohon lengkapi semua field yang wajib diisi', color: 'error' })
+    return
+  }
+
+  isSaving.value = true
+  try {
+    await $fetch(`/api/experience`, {
+      method: 'POST',
+      body: cleanForm(form),
+    })
+    toast.add({ title: 'Berhasil ditambahkan!', color: 'success' })
+    await navigateTo('/dashboard/experience')
+  } catch (error) {
+    toast.add({ title: 'Gagal menambahkan', color: 'error' })
+  } finally {
+    isSaving.value = false
+  }
+}
+
+async function handleDocumentUpload(event) {
+  const file = event.target.files[0]
+  if (!file) return
+
+  const uploadData = new FormData()
+  uploadData.append('file', file)
+  uploadData.append('folder', 'documents')
+
+  const result = await $fetch('/api/upload', {
+    method: 'POST',
+    body: uploadData,
+  })
+
+  form.certificate = result.path
+}
+</script>
+
+<template>
+  <UDashboardPanel id="experience-create">
+    <template #header>
+      <UDashboardNavbar title="Tambah Experience">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
+      </UDashboardNavbar>
+    </template>
+
+    <template #body>
+      <form @submit.prevent="handleSubmit" class="w-full flex flex-col gap-4">
+        <UFormField label="Type" required>
+          <USelect v-model="form.type" :items="typeOptions" class="w-full" placeholder="Pilih type" />
+        </UFormField>
+
+        <UFormField label="Title" required>
+          <UInput v-model="form.title" class="w-full" placeholder="PKL" />
+        </UFormField>
+
+        <UFormField label="Institution" required>
+          <UInput v-model="form.institution" class="w-full" placeholder="PT..." />
+        </UFormField>
+
+         <UFormField label="Description">
+          <UTextarea v-model="form.description" class="w-full" :rows="5" />
+        </UFormField>
+
+        <UFormField label="Year Start" required>
+          <UInput v-model.number="form.year_start" type="number" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Year End">
+          <UInput v-model.number="form.year_end" type="number" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Certificate (PDF)" required>
+          <input type="file" accept=".pdf" @change="handleDocumentUpload"
+          class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" />
+          <p v-if="form.document" class="text-sm text-gray-500 mt-1">{{ form.certificate }}</p>
+        </UFormField>
+
+        <UFormField label="Masih Berlangsung?">
+          <USwitch v-model="form.is_current" />
+        </UFormField>
+
+        <div class="flex gap-3">
+          <UButton type="submit" :loading="isSaving">Simpan</UButton>
+          <UButton to="/dashboard/experience" color="neutral" variant="outline">Batal</UButton>
+        </div>
+      </form>
+    </template>
+  </UDashboardPanel>
+</template>
