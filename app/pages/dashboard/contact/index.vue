@@ -19,8 +19,7 @@ const filteredContacts = computed(() => {
   const keyword = search.value.toLowerCase()
   return contactList.value.filter((contact) =>
     contact.apk?.toLowerCase().includes(keyword) ||
-    contact.link?.toLowerCase().includes(keyword) ||
-    contact.decs?.toLowerCase().includes(keyword)
+    contact.link?.toLowerCase().includes(keyword) 
   )
 })
 
@@ -34,19 +33,19 @@ const columns = [
   { accessorKey: 'icon', header: 'Icon' },
   { accessorKey: 'apk', header: 'Platform' },
   { accessorKey: 'link', header: 'Link' },
-  { accessorKey: 'decs', header: 'Deskripsi' },
-  { accessorKey: 'actions', header: 'Aksi' },
+  { accessorKey: 'decs', header: 'Description' },
+  { accessorKey: 'actions', header: 'Action' },
 ]
 
 async function handleDelete(id) {
-  if (!confirm('Yakin mau hapus contact ini?')) return
+  if (!confirm('Are you sure delete this contact?')) return
 
   try {
     await $fetch(`/api/contact/${id}`, { method: 'DELETE' })
-    toast.add({ title: 'Berhasil dihapus!', color: 'success' })
+    toast.add({ title: 'Deleted successfully!', color: 'success' })
     await refresh()
   } catch (error) {
-    toast.add({ title: 'Gagal menghapus', color: 'error' })
+    toast.add({ title: 'Delete Failed', color: 'error' })
   }
 }
 </script>
@@ -54,7 +53,7 @@ async function handleDelete(id) {
 <template>
   <UDashboardPanel id="contact">
     <template #header>
-      <UDashboardNavbar title="Kelola Contact">
+      <UDashboardNavbar title="Manage Contacts">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -67,10 +66,10 @@ async function handleDelete(id) {
           v-model="search"
           class="w-full max-w-xl"
           icon="i-lucide-search"
-          placeholder="Cari platform, link, atau deskripsi..."
+          placeholder="Search platform or link..."
         />
         <UButton to="/dashboard/contact/create" icon="i-lucide-plus">
-          Tambah Contact
+          Add Contact
         </UButton>
       </div>
         
@@ -124,7 +123,7 @@ async function handleDelete(id) {
               variant="outline"
               @click="handleDelete(row.original.id)"
             >
-              Hapus
+              Delete
             </UButton>
           </div>
         </template>
@@ -132,7 +131,7 @@ async function handleDelete(id) {
 
       <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-4">
         <div class="text-sm text-muted">
-          Menampilkan {{ filteredContacts.length }} dari {{ contactList?.length || 0 }} contact
+          Displaying {{ filteredContacts.length }} from  {{ contactList?.length || 0 }} contacts
         </div>
 
         <UPagination

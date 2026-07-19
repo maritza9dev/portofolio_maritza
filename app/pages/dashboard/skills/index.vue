@@ -31,21 +31,21 @@ const pagination = ref({
 
 const columns = [
   { accessorKey: 'no', header: 'No' },
-  { accessorKey: 'name', header: 'Name Skill' },
+  { accessorKey: 'name', header: 'Name' },
   { accessorKey: 'category', header: 'Category' },
   { accessorKey: 'level', header: 'Level' },
-  { accessorKey: 'actions', header: 'Aksi' },
+  { accessorKey: 'actions', header: 'Action' },
 ]
 
 async function handleDelete(id) {
-  if (!confirm('Yakin mau hapus skill ini?')) return
+  if (!confirm('Are you sure you want to delete this skill?')) return
 
   try {
     await $fetch(`/api/skills/${id}`, { method: 'DELETE' })
-    toast.add({ title: 'Berhasil dihapus!', color: 'success' })
+    toast.add({ title: 'Deleted successfully!', color: 'success' })
     await refresh()
   } catch (error) {
-    toast.add({ title: 'Gagal menghapus', color: 'error' })
+    toast.add({ title: 'Delete failed', color: 'error' })
   }
 }
 </script>
@@ -53,7 +53,7 @@ async function handleDelete(id) {
 <template>
   <UDashboardPanel id="skill">
     <template #header>
-      <UDashboardNavbar title="Kelola Skill">
+      <UDashboardNavbar title="Manage Skills">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -66,10 +66,10 @@ async function handleDelete(id) {
           v-model="search"
           class="w-full max-w-xl"
           icon="i-lucide-search"
-          placeholder="Cari name, category, atau level..."
+          placeholder="Search name, category, or level..."
         />
         <UButton to="/dashboard/skills/create" icon="i-lucide-plus">
-          Tambah Skill
+          Add Skill
         </UButton>
       </div>
         
@@ -109,7 +109,7 @@ async function handleDelete(id) {
               variant="outline"
               @click="handleDelete(row.original.id)"
             >
-              Hapus
+              Delete
             </UButton>
           </div>
         </template>
@@ -117,7 +117,7 @@ async function handleDelete(id) {
 
       <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-4">
         <div class="text-sm text-muted">
-          Menampilkan {{ filteredSkills.length }} dari {{ skillList?.length || 0 }} skill
+          Displaying {{ filteredSkills.length }} from {{ skillList?.length || 0 }} skills
         </div>
 
         <UPagination

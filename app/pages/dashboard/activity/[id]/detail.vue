@@ -35,7 +35,7 @@ const { data: activity } = await useFetch('/api/activity', {
         </div>
         
         <div>
-          <p class="text-sm text-gray-500">Title Activity</p>
+          <p class="text-sm text-gray-500">Title</p>
           <p class="font-bold text-lg">{{ activity.title }}</p>
         </div>
 
@@ -45,7 +45,7 @@ const { data: activity } = await useFetch('/api/activity', {
         </div>
 
         <div>
-          <p class="text-sm text-gray-500">Deskripsi</p>
+          <p class="text-sm text-gray-500">Description</p>
           <p>{{ activity.description || '-' }}</p>
         </div>
 
@@ -62,7 +62,7 @@ const { data: activity } = await useFetch('/api/activity', {
         <div>
         <p class="text-sm text-gray-500">Status</p>
         <UBadge :color="activity.is_current ? 'success' : 'neutral'" variant="soft">
-            {{ activity.is_current ? 'Masih Berlangsung' : 'Selesai' }}
+            {{ activity.is_current ? 'Current' : 'Completed' }}
         </UBadge>
         </div>
 
@@ -71,7 +71,7 @@ const { data: activity } = await useFetch('/api/activity', {
             Edit
           </UButton>
           <UButton to="/dashboard/activity" color="neutral" variant="ghost">
-            Kembali
+            Back
           </UButton>
         </div>
       </div>

@@ -32,7 +32,7 @@ function cleanForm(data) {
 
 async function handleSubmit() {
   if (!form.type || !form.title || !form.institution || !form.year_start || !form.certificate) {
-    toast.add({ title: 'Mohon lengkapi semua field yang wajib diisi', color: 'error' })
+    toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
   }
 
@@ -42,10 +42,10 @@ async function handleSubmit() {
       method: 'POST',
       body: cleanForm(form),
     })
-    toast.add({ title: 'Berhasil ditambahkan!', color: 'success' })
+    toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/experience')
   } catch (error) {
-    toast.add({ title: 'Gagal menambahkan', color: 'error' })
+    toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -71,7 +71,7 @@ async function handleDocumentUpload(event) {
 <template>
   <UDashboardPanel id="experience-create">
     <template #header>
-      <UDashboardNavbar title="Tambah Experience">
+      <UDashboardNavbar title="Add Experience">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -81,7 +81,7 @@ async function handleDocumentUpload(event) {
     <template #body>
       <form @submit.prevent="handleSubmit" class="w-full flex flex-col gap-4">
         <UFormField label="Type" required>
-          <USelect v-model="form.type" :items="typeOptions" class="w-full" placeholder="Pilih type" />
+          <USelect v-model="form.type" :items="typeOptions" class="w-full" placeholder="Select type" />
         </UFormField>
 
         <UFormField label="Title" required>
@@ -110,13 +110,13 @@ async function handleDocumentUpload(event) {
           <p v-if="form.document" class="text-sm text-gray-500 mt-1">{{ form.certificate }}</p>
         </UFormField>
 
-        <UFormField label="Masih Berlangsung?">
+        <UFormField label="Is Current?">
           <USwitch v-model="form.is_current" />
         </UFormField>
 
         <div class="flex gap-3">
-          <UButton type="submit" :loading="isSaving">Simpan</UButton>
-          <UButton to="/dashboard/experience" color="neutral" variant="outline">Batal</UButton>
+          <UButton type="submit" :loading="isSaving">Save As</UButton>
+          <UButton to="/dashboard/experience" color="neutral" variant="outline">Cancel</UButton>
         </div>
       </form>
     </template>

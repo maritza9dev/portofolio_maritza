@@ -37,18 +37,18 @@ const columns = [
   { accessorKey: 'year_start', header: 'Year Start' },
   { accessorKey: 'year_end', header: 'Year End' },
   { accessorKey: 'is_current', header: 'Is Current' },
-  { accessorKey: 'actions', header: 'Aksi' },
+  { accessorKey: 'actions', header: 'Action' },
 ]
 
 async function handleDelete(id) {
-  if (!confirm('Yakin mau hapus education ini?')) return
+  if (!confirm('Are you sure you want to delete this education?')) return
 
   try {
     await $fetch(`/api/education/${id}`, { method: 'DELETE' })
-    toast.add({ title: 'Berhasil dihapus!', color: 'success' })
+    toast.add({ title: 'Deleted successfully!', color: 'success' })
     await refresh()
   } catch (error) {
-    toast.add({ title: 'Gagal menghapus', color: 'error' })
+    toast.add({ title: 'Delete failed', color: 'error' })
   }
 }
 </script>
@@ -56,7 +56,7 @@ async function handleDelete(id) {
 <template>
   <UDashboardPanel id="education">
     <template #header>
-      <UDashboardNavbar title="Kelola Education">
+      <UDashboardNavbar title="Manage Education">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -69,10 +69,10 @@ async function handleDelete(id) {
           v-model="search"
           class="w-full max-w-xl"
           icon="i-lucide-search"
-          placeholder="Cari school, degree, atau major..."
+          placeholder="Search school, degree, or major..."
         />
         <UButton to="/dashboard/education/create" icon="i-lucide-plus">
-          Tambah Education
+          Add Education
         </UButton>
       </div>
         
@@ -121,7 +121,7 @@ async function handleDelete(id) {
               variant="outline"
               @click="handleDelete(row.original.id)"
             >
-              Hapus
+              Delete
             </UButton>
           </div>
         </template>
@@ -129,7 +129,7 @@ async function handleDelete(id) {
 
       <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-4">
         <div class="text-sm text-muted">
-          Menampilkan {{ filteredEducation.length }} dari {{ educationList?.length || 0 }} education
+          Displaying {{ filteredEducation.length }} from {{ educationList?.length || 0 }} education
         </div>
 
         <UPagination

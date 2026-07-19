@@ -32,22 +32,22 @@ const pagination = ref({
 
 const columns = [
   { accessorKey: 'no', header: 'No' },
-  { accessorKey: 'name_p', header: 'Name Project' },
+  { accessorKey: 'name_p', header: 'Name' },
   { accessorKey: 'role', header: 'Role' },
   { accessorKey: 'tech', header: 'Technology' },
   { accessorKey: 'projectDate', header: 'Project Year' },
-  { accessorKey: 'actions', header: 'Aksi' },
+  { accessorKey: 'actions', header: 'Action' },
 ]
 
 async function handleDelete(id) {
-  if (!confirm('Yakin mau hapus project ini?')) return
+  if (!confirm('Are you sure you want to delete this project?')) return
 
   try {
     await $fetch(`/api/projects/${id}`, { method: 'DELETE' })
-    toast.add({ title: 'Berhasil dihapus!', color: 'success' })
+    toast.add({ title: 'Delete successfully!', color: 'success' })
     await refresh()
   } catch (error) {
-    toast.add({ title: 'Gagal menghapus', color: 'error' })
+    toast.add({ title: 'Delete failed', color: 'error' })
   }
 }
 </script>
@@ -55,7 +55,7 @@ async function handleDelete(id) {
 <template>
   <UDashboardPanel id="project">
     <template #header>
-      <UDashboardNavbar title="Kelola Project">
+      <UDashboardNavbar title="Manage Projects">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -68,10 +68,10 @@ async function handleDelete(id) {
           v-model="search"
           class="w-full max-w-xl"
           icon="i-lucide-search"
-          placeholder="Cari name project, role, technology, project year..."
+          placeholder="Search name, role, technology, or project year..."
         />
         <UButton to="/dashboard/projects/create" icon="i-lucide-plus">
-          Tambah Project
+          Add Project
         </UButton>
       </div>
         
@@ -120,7 +120,7 @@ async function handleDelete(id) {
               variant="outline"
               @click="handleDelete(row.original.id)"
             >
-              Hapus
+              Delete
             </UButton>
           </div>
         </template>
@@ -128,7 +128,7 @@ async function handleDelete(id) {
 
       <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-4">
         <div class="text-sm text-muted">
-          Menampilkan {{ filteredProjects.length }} dari {{ projectList?.length || 0 }} project
+          Displaying {{ filteredProjects.length }} from  {{ projectList?.length || 0 }} projects
         </div>
 
         <UPagination

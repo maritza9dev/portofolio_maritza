@@ -40,7 +40,7 @@ function cleanForm(data) {
 
 async function handleSubmit() {
   if (!form.short_description || !form.long_description || !form.position || !form.image || !form.document ) {
-    toast.add({ title: 'Mohon lengkapi semua field yang wajib diisi', color: 'error' })
+    toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
   }
 
@@ -50,10 +50,10 @@ async function handleSubmit() {
       method: 'PUT',
       body: cleanForm(form),
     })
-    toast.add({ title: 'Berhasil disimpan!', color: 'success' })
+    toast.add({ title: 'Saved successfully!', color: 'success' })
     await refresh()
   } catch (error) {
-    toast.add({ title: 'Gagal menyimpan', color: 'error' })
+    toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -116,20 +116,20 @@ async function handleDocumentUpload(event) {
           <UInput v-model="form.position" class="w-full" />
         </UFormField>
 
-        <UFormField label="Foto Profil" required>
+        <UFormField label="Photo" required>
           <input type="file" accept="image/*" @change="handleImageUpload" 
           class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" />
           <img v-if="form.image" :src="form.image" class="mt-2 w-24 h-24 object-cover rounded-lg" />
         </UFormField>
  
-        <UFormField label="Dokumen CV (PDF)" required>
+        <UFormField label="Document CV (PDF)" required>
           <input type="file" accept=".pdf" @change="handleDocumentUpload"
           class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" />
           <p v-if="form.document" class="text-sm text-gray-500 mt-1">{{ form.document }}</p>
         </UFormField>
 
         <UButton type="submit" :loading="isSaving" class="self-start">
-          Simpan Perubahan
+         Save Changes
         </UButton>
       </form>
     </template>

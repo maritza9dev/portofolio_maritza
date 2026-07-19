@@ -18,7 +18,7 @@ const { user } = useUserSession()
     </template>
 
     <template #body>
-      <p>Selamat datang, {{ user?.username }}! 👋</p>
+      <p>Hello, {{ user?.username }}! Ready to build today? 👋</p>
     </template>
   </UDashboardPanel>
 </template>

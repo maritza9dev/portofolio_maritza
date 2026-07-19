@@ -41,7 +41,7 @@ const { data: experience } = await useFetch('/api/experience', {
         </div>
 
         <div>
-          <p class="text-sm text-gray-500">Deskripsi</p>
+          <p class="text-sm text-gray-500">Description</p>
           <p>{{ experience.description || '-' }}</p>
         </div>
 
@@ -56,7 +56,7 @@ const { data: experience } = await useFetch('/api/experience', {
         </div>
 
         <div>
-        <p class="text-sm text-gray-500">Sertifikat</p>
+        <p class="text-sm text-gray-500">Certificate</p>
         <a
             v-if="experience.certificate"
             :href="experience.certificate"
@@ -64,7 +64,7 @@ const { data: experience } = await useFetch('/api/experience', {
             class="text-primary underline inline-flex items-center gap-1"
         >
             <UIcon name="i-lucide-file-text" />
-            Lihat Sertifikat
+            View Sertifikat
         </a>
         <p v-else>-</p>
         </div>
@@ -72,7 +72,7 @@ const { data: experience } = await useFetch('/api/experience', {
         <div>
         <p class="text-sm text-gray-500">Status</p>
         <UBadge :color="experience.is_current ? 'success' : 'neutral'" variant="soft">
-            {{ experience.is_current ? 'Masih Berlangsung' : 'Selesai' }}
+            {{ experience.is_current ? 'Current' : 'Completed' }}
         </UBadge>
         </div>
 
@@ -81,7 +81,7 @@ const { data: experience } = await useFetch('/api/experience', {
             Edit
           </UButton>
           <UButton to="/dashboard/experience" color="neutral" variant="ghost">
-            Kembali
+            Back
           </UButton>
         </div>
       </div>

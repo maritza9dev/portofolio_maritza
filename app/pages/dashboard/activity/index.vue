@@ -34,18 +34,18 @@ const columns = [
   { accessorKey: 'type', header: 'Type' },
   { accessorKey: 'title', header: 'Title' },
   { accessorKey: 'position', header: 'Position' },
-  { accessorKey: 'actions', header: 'Aksi' },
+  { accessorKey: 'actions', header: 'Action' },
 ]
 
 async function handleDelete(id) {
-  if (!confirm('Yakin mau hapus activity ini?')) return
+  if (!confirm('Are you sure you want to delete this activityi?')) return
 
   try {
     await $fetch(`/api/activity/${id}`, { method: 'DELETE' })
-    toast.add({ title: 'Berhasil dihapus!', color: 'success' })
+    toast.add({ title: 'Deleted successfully!', color: 'success' })
     await refresh()
   } catch (error) {
-    toast.add({ title: 'Gagal menghapus', color: 'error' })
+    toast.add({ title: 'Delete failed', color: 'error' })
   }
 }
 </script>
@@ -53,7 +53,7 @@ async function handleDelete(id) {
 <template>
   <UDashboardPanel id="activity">
     <template #header>
-      <UDashboardNavbar title="Kelola Activity">
+      <UDashboardNavbar title="Manage Activities">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -66,10 +66,10 @@ async function handleDelete(id) {
           v-model="search"
           class="w-full max-w-xl"
           icon="i-lucide-search"
-          placeholder="Cari type, title, atau institution..."
+          placeholder="Search type, title, or institution..."
         />
         <UButton to="/dashboard/activity/create" icon="i-lucide-plus">
-          Tambah Activity
+          Add Activity
         </UButton>
       </div>
         
@@ -118,7 +118,7 @@ async function handleDelete(id) {
               variant="outline"
               @click="handleDelete(row.original.id)"
             >
-              Hapus
+              Delete
             </UButton>
           </div>
         </template>
@@ -126,7 +126,7 @@ async function handleDelete(id) {
 
       <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-4">
         <div class="text-sm text-muted">
-          Menampilkan {{ filteredActivitys.length }} dari {{ activityList?.length || 0 }} activity
+          Displaying  {{ filteredActivitys.length }} from {{ activityList?.length || 0 }} activity
         </div>
 
         <UPagination

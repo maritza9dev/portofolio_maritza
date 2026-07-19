@@ -31,7 +31,7 @@ const { data: project } = await useFetch('/api/projects', {
         />
 
         <div>
-          <p class="text-sm text-gray-500">Nama Project</p>
+          <p class="text-sm text-gray-500">Name Project</p>
           <p class="font-bold text-lg">{{ project.name_p }}</p>
         </div>
 
@@ -41,12 +41,12 @@ const { data: project } = await useFetch('/api/projects', {
         </div>
 
         <div>
-          <p class="text-sm text-gray-500">Deskripsi</p>
+          <p class="text-sm text-gray-500">Description</p>
           <p>{{ project.description || '-' }}</p>
         </div>
 
         <div>
-          <p class="text-sm text-gray-500">Tech Stack</p>
+          <p class="text-sm text-gray-500">Technology</p>
           <div class="flex flex-wrap gap-2">
             <UBadge v-for="(tech, i) in project.tech" :key="i" variant="soft">
               {{ tech }}
@@ -55,7 +55,7 @@ const { data: project } = await useFetch('/api/projects', {
         </div>
 
         <div>
-          <p class="text-sm text-gray-500">Tahun</p>
+          <p class="text-sm text-gray-500">Year</p>
           <p>{{ project.projectDate }}</p>
         </div>
 
@@ -77,7 +77,7 @@ const { data: project } = await useFetch('/api/projects', {
             Edit
           </UButton>
           <UButton to="/dashboard/projects" color="neutral" variant="ghost">
-            Kembali
+            Back
           </UButton>
         </div>
       </div>

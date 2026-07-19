@@ -21,7 +21,7 @@ const links = [[{
     open.value = false
   }
 }, {
-  label: 'Contact',
+  label: 'Contacts',
   icon: 'i-lucide-contact',
   to: '/dashboard/contact',
   onSelect: () => {
@@ -49,14 +49,14 @@ const links = [[{
     open.value = false
   }
 }, {
-  label: 'Experience',
+  label: 'Experiences',
   icon: 'i-lucide-briefcase',
   to: '/dashboard/experience',
   onSelect: () => {
     open.value = false
   }
 }, {
-  label: 'Activity',
+  label: 'Activities',
   icon: 'i-lucide-award',
   to: '/dashboard/activity',
   onSelect: () => {

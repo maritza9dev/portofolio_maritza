@@ -39,7 +39,6 @@ watchEffect(() => {
     form.link = contact.value.link
     form.decs = contact.value.decs
 
-    // Cari platform yang cocok buat pre-select dropdown
     const matched = platformOptions.find((p) => p.value === contact.value.apk)
     if (matched) selectedPlatform.value = matched
   }
@@ -67,7 +66,7 @@ function cleanForm(data) {
 
 async function handleSubmit() {
   if (!form.icon || !form.apk || !form.link) {
-    toast.add({ title: 'Mohon lengkapi semua field yang wajib diisi', color: 'error' })
+    toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
   }
 
@@ -77,10 +76,10 @@ async function handleSubmit() {
       method: 'PUT',
       body: cleanForm(form),
     })
-    toast.add({ title: 'Berhasil diperbarui!', color: 'success' })
+    toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/contact')
   } catch (error) {
-    toast.add({ title: 'Gagal memperbarui', color: 'error' })
+    toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -98,12 +97,12 @@ async function handleSubmit() {
     </template>
 
     <template #body>
-      <form @submit.prevent="handleSubmit" class="max-w-xl flex flex-col gap-4">
-        <UFormField label="Pilih Platform" required>
+      <form @submit.prevent="handleSubmit" class="w-full flex flex-col gap-4">
+        <UFormField label="Select Platform" required>
           <USelectMenu
             v-model="selectedPlatform"
             :items="platformOptions"
-            placeholder="Pilih platform..."
+            placeholder="Select platform..."
             class="w-full"
           >
             <template #leading="{ modelValue }">
@@ -118,11 +117,11 @@ async function handleSubmit() {
         <UFormField label="Preview Icon">
           <div class="flex items-center gap-2 text-sm text-gray-500">
             <UIcon v-if="form.icon" :name="form.icon" class="text-xl" />
-            <span>{{ form.icon || 'Belum dipilih' }}</span>
+            <span>{{ form.icon || 'Not yet selected' }}</span>
           </div>
         </UFormField>
 
-        <UFormField label="Platform (nama tampil)" required>
+        <UFormField label="Platform" required>
           <UInput v-model="form.apk" class="w-full" placeholder="Instagram" />
         </UFormField>
 
@@ -130,13 +129,13 @@ async function handleSubmit() {
           <UInput v-model="form.link" class="w-full" placeholder="https://instagram.com/username" />
         </UFormField>
 
-        <UFormField label="Deskripsi">
+        <UFormField label="Description">
           <UInput v-model="form.decs" class="w-full" />
         </UFormField>
 
         <div class="flex gap-3">
-          <UButton type="submit" :loading="isSaving">Simpan Perubahan</UButton>
-          <UButton to="/dashboard/contact" color="neutral" variant="outline">Batal</UButton>
+          <UButton type="submit" :loading="isSaving">Save Changes</UButton>
+          <UButton to="/dashboard/contact" color="neutral" variant="outline">Cancel</UButton>
         </div>
       </form>
     </template>

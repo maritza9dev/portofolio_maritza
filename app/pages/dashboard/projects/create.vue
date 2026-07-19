@@ -31,7 +31,7 @@ function cleanForm(data) {
 
 async function handleSubmit() {
   if (!form.name_p || !form.role || !techInput.value || !form.projectDate || !form.image) {
-    toast.add({ title: 'Mohon lengkapi semua field yang wajib diisi', color: 'error' })
+    toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
   }
 
@@ -43,10 +43,10 @@ async function handleSubmit() {
       method: 'POST',
       body: cleanForm(form),
     })
-    toast.add({ title: 'Berhasil ditambahkan!', color: 'success' })
+    toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/projects')
   } catch (error) {
-    toast.add({ title: 'Gagal menambahkan', color: 'error' })
+    toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -72,7 +72,7 @@ async function handleImageUpload(event) {
 <template>
   <UDashboardPanel id="project-create">
     <template #header>
-      <UDashboardNavbar title="Tambah Project">
+      <UDashboardNavbar title="Add Project">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -93,7 +93,7 @@ async function handleImageUpload(event) {
           <UInput v-model="form.role" class="w-full" placeholder="Project Manager" />
         </UFormField>
 
-        <UFormField label="Technology (pisahkan dengan koma)" required>
+        <UFormField label="Technology" required>
           <UInput v-model="techInput" class="w-full" placeholder="Vue.js, Nuxt.js, Tailwind" />
         </UFormField>
 
@@ -112,8 +112,8 @@ async function handleImageUpload(event) {
         </UFormField>
 
         <div class="flex gap-3">
-          <UButton type="submit" :loading="isSaving">Simpan</UButton>
-          <UButton to="/dashboard/projects" color="neutral" variant="outline">Batal</UButton>
+          <UButton type="submit" :loading="isSaving">Save As</UButton>
+          <UButton to="/dashboard/projects" color="neutral" variant="outline">Cancel</UButton>
         </div>
       </form>
     </template>

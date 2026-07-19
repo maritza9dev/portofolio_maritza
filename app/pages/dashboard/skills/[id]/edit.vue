@@ -43,7 +43,7 @@ function cleanForm(data) {
 
 async function handleSubmit() {
   if (!form.name || !form.category || !form.level) {
-    toast.add({ title: 'Mohon lengkapi semua field yang wajib diisi', color: 'error' })
+    toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
   }
 
@@ -53,10 +53,10 @@ async function handleSubmit() {
       method: 'PUT',
       body: cleanForm(form),
     })
-    toast.add({ title: 'Berhasil diperbarui!', color: 'success' })
+    toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/skills')
   } catch (error) {
-    toast.add({ title: 'Gagal memperbarui', color: 'error' })
+    toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -76,21 +76,21 @@ async function handleSubmit() {
     <template #body>
       <form @submit.prevent="handleSubmit" class="w-full flex flex-col gap-4">
 
-        <UFormField label="Name Skill" required>
+        <UFormField label="Name" required>
           <UInput v-model="form.name" class="w-full" />
         </UFormField>
 
         <UFormField label="Category" required>
-          <USelect v-model="form.category" :items="categoryOptions" class="w-full" placeholder="Pilih category" />
+          <USelect v-model="form.category" :items="categoryOptions" class="w-full" placeholder="Select category" />
         </UFormField>
 
         <UFormField label="Level" required>
-          <USelect v-model="form.level" :items="levelOptions" class="w-full" placeholder="Pilih level" />
+          <USelect v-model="form.level" :items="levelOptions" class="w-full" placeholder="Select level" />
         </UFormField>
 
         <div class="flex gap-3">
-          <UButton type="submit" :loading="isSaving">Simpan Perubahan</UButton>
-          <UButton to="/dashboard/skills" color="neutral" variant="outline">Batal</UButton>
+          <UButton type="submit" :loading="isSaving">Save Changes</UButton>
+          <UButton to="/dashboard/skills" color="neutral" variant="outline">Cancel</UButton>
         </div>
       </form>
     </template>

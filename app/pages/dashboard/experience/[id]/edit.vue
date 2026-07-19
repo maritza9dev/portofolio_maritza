@@ -52,7 +52,7 @@ function cleanForm(data) {
 
 async function handleSubmit() {
   if (!form.type || !form.title || !form.institution || !form.year_start || !form.certificate) {
-    toast.add({ title: 'Mohon lengkapi semua field yang wajib diisi', color: 'error' })
+    toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
   }
 
@@ -62,10 +62,10 @@ async function handleSubmit() {
       method: 'PUT',
       body: cleanForm(form),
     })
-    toast.add({ title: 'Berhasil diperbarui!', color: 'success' })
+    toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/experience')
   } catch (error) {
-    toast.add({ title: 'Gagal memperbarui', color: 'error' })
+    toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -102,7 +102,7 @@ async function handleDocumentUpload(event) {
       <form @submit.prevent="handleSubmit" class="w-full flex flex-col gap-4">
 
         <UFormField label="Type" required>
-          <USelect v-model="form.type" :items="typeOptions" class="w-full" placeholder="Pilih type" />
+          <USelect v-model="form.type" :items="typeOptions" class="w-full" placeholder="Select type" />
         </UFormField>
 
         <UFormField label="Title" required>
@@ -131,13 +131,13 @@ async function handleDocumentUpload(event) {
           <p v-if="form.certificate" class="text-sm text-gray-500 mt-1">{{ form.certificate }}</p>
         </UFormField>
 
-        <UFormField label="Masih Berlangsung?">
+        <UFormField label="Is Current?">
           <USwitch v-model="form.is_current" />
         </UFormField>
 
         <div class="flex gap-3">
-          <UButton type="submit" :loading="isSaving">Simpan Perubahan</UButton>
-          <UButton to="/dashboard/experience" color="neutral" variant="outline">Batal</UButton>
+          <UButton type="submit" :loading="isSaving">Save Changes</UButton>
+          <UButton to="/dashboard/experience" color="neutral" variant="outline">Cancel</UButton>
         </div>
       </form>
     </template>
