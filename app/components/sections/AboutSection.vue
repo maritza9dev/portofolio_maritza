@@ -1,7 +1,7 @@
 <template>
   <section id="about" class="px-8 py-16 scroll-mt-20">
     <h1 class="font-inria font-bold text-3xl md:text-4xl mb-10">
-      About Me
+      Get to Know Me 
     </h1>
 
     <div

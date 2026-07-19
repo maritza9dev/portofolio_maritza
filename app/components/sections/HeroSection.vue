@@ -1,72 +1,65 @@
 <template>
   <section id="home" class="bg-pink-200 pt-28 pb-16 px-8 md:px-16 scroll-mt-24">
     <h1
-      v-motion
-      :initial="{ opacity: 0, y: -20 }"
-      :enter="{ opacity: 1, y: 0, transition: { duration: 600 } }"
-      class="text-center font-inria font-bold text-3xl md:text-4xl mb-10"
+     class="text-center font-inria font-bold text-3xl md:text-4xl mb-10 transition-all duration-700"
+    :class="appReady ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-5'"
     >
-      Hello, Everyone!
+    Hey there! Welcome to my digital space
     </h1>
 
     <div class="grid md:grid-cols-2 gap-10 items-center">
-      <!-- Kolom kiri -->
       <div>
         <p
-          v-motion
-          :initial="{ opacity: 0, x: -30 }"
-          :enter="{ opacity: 1, x: 0, transition: { duration: 500, delay: 100 } }"
-          class="font-inria text-5xl mb-2"
+          class="font-inria text-5xl mb-2 transition-all duration-700"
+          :class="appReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'"
+          style="transition-delay: 100ms"
         >
           i'm
         </p>
 
         <h2
-          v-motion
-          :initial="{ opacity: 0, x: -30 }"
-          :enter="{ opacity: 1, x: 0, transition: { duration: 500, delay: 200 } }"
-          class="font-bakbak font-bold text-3xl md:text-4xl mb-4 leading-snug"
+          class="font-bakbak font-bold text-3xl md:text-4xl mb-4 leading-snug transition-all duration-700"
+          :class="appReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'"
+          style="transition-delay: 200ms"
         >
           MARITZA RIEVANI WIBOWO
         </h2>
 
         <div
-          v-if="biodata"
-          v-motion
-          :initial="{ opacity: 0, x: -30 }"
-          :enter="{ opacity: 1, x: 0, transition: { duration: 800, delay: 200, ease: 'easeOut' } }"
-          class="mb-6"
-        >
-          <p class="inline-block text-sm md:text-base font-medium text-gray-800 border-b-2 border-white pb-1 ml-2">
-            {{ biodata.position }}
-          </p>
+            v-if="biodata"
+            class="mb-6 transition-all duration-700"
+            :class="appReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'"
+            style="transition-delay: 300ms"
+          >
+            <p class="inline-block text-sm md:text-base font-medium text-gray-800 border-b-2 border-white pb-1 ml-2">
+              {{ biodata.position }}
+            </p>
         </div>
 
         <div
           v-if="biodata"
-          v-motion
-          :initial="{ opacity: 0, x: -30 }"
-          :enter="{ opacity: 1, x: 0, transition: { duration: 800, delay: 200, ease: 'easeOut' } }"
-          class="bg-white rounded-2xl p-6 shadow-md mb-6"
+          class="bg-white rounded-2xl p-6 shadow-md mb-6 transition-all duration-700"
+          :class="appReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'"
+          style="transition-delay: 400ms"
         >
-          <p class="text-gray-700">{{ biodata.short_description }}</p>
+          <p class="text-gray-700 font-normal text-base md:text-lg leading-relaxed">
+            {{ biodata.short_description }}
+          </p>
         </div>
 
         <a
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 500 } }"
+          class="inline-block border-2 border-black rounded-full px-6 py-3 font-medium mb-8 hover:bg-black hover:text-white transition-colors leading-snug duration-700"
+          :class="appReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'"
+          style="transition-delay: 500ms"
           href="#projects"
-          class="inline-block border-2 border-black rounded-full px-6 py-3 font-medium mb-8 hover:bg-black hover:text-white transition-colors"
         >
           View My Projects
         </a>
 
         <div
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 600 } }"
-          class="flex gap-4"
+          class="flex gap-4 leading-snug duration-700"
+          :class="appReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'"
+          style="transition-delay: 600ms"
         >
          <a 
             v-for="contact in contactList"
@@ -122,6 +115,7 @@
 </template>
 
 <script setup>
+const appReady = useState('appReady')
 const { data: biodataList } = await useFetch('/api/biodata')
 const biodata = computed(() => biodataList.value?.[0])
 

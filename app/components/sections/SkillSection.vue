@@ -1,17 +1,15 @@
 <template>
   <section id="skills" class="px-8 py-16 scroll-mt-20 overflow-hidden">
-    <!-- Judul Section dengan animasi masuk dari kiri -->
     <h1 
       ref="titleRef"
       class="font-inria font-bold text-3xl md:text-4xl mb-12 opacity-0 -translate-x-10 transition-all duration-700 ease-out"
       :class="{ 'opacity-100 translate-x-0': isVisible }"
     >
-      My Skills
+      Core Skills
     </h1>
 
     <div class="max-w-4xl mx-auto space-y-10">
       <div v-for="(items, category) in groupedSkills" :key="category">
-        <!-- Judul Kategori dengan animasi fade-in -->
         <h2 
           class="text-xl font-bold mb-4 opacity-0 transition-opacity duration-700 delay-200"
           :class="{ 'opacity-100': isVisible }"
@@ -46,7 +44,7 @@ import { ref, computed, onMounted } from 'vue'
 
 const { data: skillsList } = await useFetch('/api/skills')
 
-// State untuk mendeteksi apakah section sudah masuk ke layar (viewport)
+// State untuk mendeteksi section sudah masuk ke layar (viewport}
 const isVisible = ref(false)
 const titleRef = ref(null)
 
@@ -55,10 +53,10 @@ onMounted(() => {
     ([entry]) => {
       if (entry.isIntersecting) {
         isVisible.value = true
-        observer.unobserve(entry.target) // Stop observe setelah animasi jalan sekali
+        observer.unobserve(entry.target) 
       }
     },
-    { threshold: 0.1 } // Jalankan animasi saat 10% area section sudah terlihat
+    { threshold: 0.1 } 
   )
 
   if (titleRef.value) {
@@ -90,16 +88,12 @@ function formatCategory(category) {
 </script>
 
 <style scoped>
-/* State awal badge sebelum animasi dipicu */
 .skill-badge {
   opacity: 0;
   transform: scale(0.6) translateY(20px);
 }
-
-/* Kelas animasi yang dipicu via state isVisible */
 .skill-badge.animate-pop {
   animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  /* Menggunakan delay dinamis yang dihitung dari index v-for */
   animation-delay: calc(var(--delay) + 300ms);
 }
 

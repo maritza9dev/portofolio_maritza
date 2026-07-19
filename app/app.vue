@@ -31,7 +31,7 @@ useSeoMeta({
 
 const isLoading = ref(true)
 const loadingPercent = ref(0)
-
+const appReady = useState('appReady', () => false)
 onMounted(() => {
   const duration = 1800
   const startTime = performance.now()
@@ -41,11 +41,12 @@ onMounted(() => {
     const progress = Math.min(elapsed / duration, 1)
     loadingPercent.value = Math.floor(progress * 100)
 
-    if (progress < 1) {
+   if (progress < 1) {
       requestAnimationFrame(updateProgress)
     } else {
       setTimeout(() => {
         isLoading.value = false
+        appReady.value = true 
       }, 200)
     }
   }
@@ -60,15 +61,15 @@ onMounted(() => {
 
     <Transition name="fade">
       <div
-  v-if="isLoading"
-  class="fixed inset-0 z-100 bg-cover bg-center flex flex-col items-center justify-center"
-  style="background-image: url('/images/splash.jpg')"
->
-        <img src="/images/logo_m.png" alt="Logo Maritza" class="w-50 h-50 mb-4 animate-pulse" />
-       <p class="font-inria font-bold text-2xl tabular-nums">{{ loadingPercent }}%</p>
-<div class="mt-4 w-40 h-1 bg-white/50 rounded-full overflow-hidden">
-  <div class="h-full bg-black transition-all duration-75" :style="{ width: `${loadingPercent}%` }"></div>
-</div>
+        v-if="isLoading"
+        class="fixed inset-0 z-100 bg-cover bg-center flex flex-col items-center justify-center"
+        style="background-image: url('/images/splash.jpg')"
+      >
+            <img src="/images/logo_m.png" alt="Logo Maritza" class="w-50 h-50 mb-4 animate-pulse" />
+            <p class="font-inria font-bold text-2xl tabular-nums">{{ loadingPercent }}%</p>
+      <div class="mt-4 w-40 h-1 bg-white/50 rounded-full overflow-hidden">
+        <div class="h-full bg-black transition-all duration-75" :style="{ width: `${loadingPercent}%` }"></div>
+      </div>
       </div>
     </Transition>
 
