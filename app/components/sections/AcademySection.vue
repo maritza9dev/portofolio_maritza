@@ -14,7 +14,7 @@
         <div
           v-for="(edu, index) in displayedEducation"
           :key="edu.id"
-          class="flex flex-col items-center w-[260px] shrink-0"
+          class="flex flex-col items-center w-65 shrink-0"
         >
           <!-- Slot atas: isi kalau genap, kosong kalau ganjil -->
           <div class="h-28 flex flex-col justify-end items-center text-center">
@@ -56,7 +56,7 @@
 <div 
   v-if="visibleCount < educationList.length" 
   key="next-btn"
-  class="flex flex-col items-center w-[100px] shrink-0"
+  class="flex flex-col items-center w-25 shrink-0"
 >
   <div class="h-28"></div> <!-- Spacer atas -->
   <div class="relative w-full flex items-center justify-start shrink-0">
