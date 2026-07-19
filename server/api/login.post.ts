@@ -5,7 +5,6 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const { username, password } = body
 
-  // Cari admin berdasarkan username
   const admin = await prisma.admin.findUnique({
     where: { username },
   })
@@ -17,7 +16,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Cocokin password yang diketik sama hash di database
   const isValid = await bcrypt.compare(password, admin.password)
 
   if (!isValid) {
@@ -27,7 +25,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Kalau valid, simpan session login
   await setUserSession(event, {
     user: {
       id: admin.id,
