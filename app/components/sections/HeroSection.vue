@@ -59,7 +59,7 @@
           href="#projects"
           class="inline-block border-2 border-black rounded-full px-6 py-3 font-medium mb-8 hover:bg-black hover:text-white transition-colors"
         >
-          View My Project
+          View My Projects
         </a>
 
         <div
@@ -82,9 +82,8 @@
         </div>
       </div>
 
-      <!-- Kolom kanan: foto yang bisa digoyang -->
+      <!-- bagian foto -->
       <div class="relative flex justify-center">
-        <!-- Shadow ambient di belakang -->
         <div class="absolute bottom-6 w-64 h-8 bg-black/20 blur-xl rounded-full"></div>
 
         <div
@@ -100,7 +99,7 @@
           @touchstart="startDrag"
           @transitionend="onTransitionEnd"
         >
-          <!-- Paku/pivot -->
+          <!-- Paku -->
           <div class="w-4 h-4 rounded-full bg-linear-to-br from-gray-400 to-gray-700 shadow-md z-10"></div>
 
           <!-- Tali -->
@@ -128,9 +127,9 @@ const biodata = computed(() => biodataList.value?.[0])
 
 const { data: contactList } = await useFetch('/api/contact')
 
-// Logic buat foto yang bisa digoyang kayak pendulum
+// Logic buat animasi foto
 const rotation = ref(0)
-const phase = ref('idle') // 'idle' | 'dragging' | 'settling'
+const phase = ref('idle')
 let startX = 0
 let startRotation = 0
 
