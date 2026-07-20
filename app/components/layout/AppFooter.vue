@@ -9,7 +9,6 @@
             v-for="contact in contactList"
             :key="contact.id"
             :href="contact.link"
-            target="_blank"
             class="w-11 h-11 rounded-full bg-black text-white flex items-center justify-center text-lg hover:bg-pink-500 transition-colors"
             :aria-label="contact.platform"
           >
