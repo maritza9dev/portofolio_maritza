@@ -11,8 +11,6 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@iconify-json/lucide": "^1.2.114",
-    "@iconify-json/simple-icons": "^1.2.87",
     "@internationalized/date": "^3.12.2",
     "@nuxt/ui": "^4.9.0",
     "@prisma/adapter-pg": "^7.8.0",
@@ -39,6 +37,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.118",
+    "@iconify-json/simple-icons": "^1.2.91",
     "@nuxt/eslint": "^1.16.0",
     "@types/bcrypt": "^6.0.0",
     "eslint": "^10.6.0",

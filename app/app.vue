@@ -10,7 +10,7 @@ useHead({
     { key: 'theme-color', name: 'theme-color', content: color }
   ],
   link: [
-    { rel: 'icon', href: '/favicon.ico' }
+   { rel: 'icon', type: 'image/svg+xml', href: '/images/logo_m.png' }
   ],
   htmlAttrs: {
     lang: 'id'

@@ -65,6 +65,8 @@
             v-for="contact in contactList"
             :key="contact.id"
             :href="contact.link"
+            :target="contact.link.startsWith('mailto:') ? '_self' : '_blank'"
+            :rel="contact.link.startsWith('mailto:') ? undefined : 'noopener noreferrer'"
             class="w-11 h-11 rounded-full bg-black text-white flex items-center justify-center text-lg hover:bg-pink-500 transition-colors"
             :aria-label="contact.platform"
           >

@@ -29,6 +29,9 @@ watch(selectedPlatform, (platform) => {
   if (platform) {
     form.icon = platform.icon
     form.apk = platform.value
+  } else {
+    form.icon = ''
+    form.apk = ''
   }
 })
 
@@ -60,6 +63,7 @@ async function handleSubmit() {
     toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/contact')
   } catch (error) {
+    console.error('Error saving contact:', error)
     toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
@@ -79,31 +83,31 @@ async function handleSubmit() {
 
     <template #body>
       <form @submit.prevent="handleSubmit" class="w-full flex flex-col gap-4">
-        <UFormField label= "Select Platform" required>
+        <UFormField label="Select Platform" required>
           <USelectMenu
             v-model="selectedPlatform"
             :items="platformOptions"
             placeholder="Select platform..."
             class="w-full"
           >
-            <template #leading="{ modelValue }">
-              <UIcon v-if="modelValue" :name="modelValue.icon" />
+            <template #leading>
+              <UIcon v-if="selectedPlatform" :name="selectedPlatform.icon" class="w-4 h-4" />
             </template>
             <template #item-leading="{ item }">
-              <UIcon :name="item.icon" />
+              <UIcon :name="item.icon" class="w-4 h-4" />
             </template>
           </USelectMenu>
         </UFormField>
 
         <UFormField label="Preview Icon">
-          <div class="flex items-center gap-2 text-sm text-gray-500">
-            <UIcon v-if="form.icon" :name="form.icon" class="text-xl" />
-            <span>{{ form.icon || 'Not yet selected' }}</span>
+          <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg text-sm text-gray-500">
+            <UIcon v-if="form.icon" :name="form.icon" class="text-2xl text-primary" />
+            <span class="font-mono text-xs">{{ form.icon || 'Not yet selected' }}</span>
           </div>
         </UFormField>
 
-        <UFormField label="Platform" required>
-          <UInput v-model="form.apk" class="w-full" placeholder="Instagram" />
+        <UFormField label="Platform Name" required>
+          <UInput v-model="form.apk" class="w-full" readonly placeholder="Will follow select platform" />
         </UFormField>
 
         <UFormField label="Link" required>
@@ -111,7 +115,7 @@ async function handleSubmit() {
         </UFormField>
 
         <UFormField label="Description">
-          <UInput v-model="form.decs" class="w-full" />
+          <UInput v-model="form.decs" class="w-full" placeholder="Optional description" />
         </UFormField>
 
         <div class="flex gap-3">

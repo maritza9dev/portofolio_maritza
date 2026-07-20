@@ -49,15 +49,13 @@
         </div>
 
         <div 
-          v-if="visibleCount < educationList.length" 
+          v-if="visibleCount < (educationList?.length ?? 0)" 
           key="next-btn"
           class="flex flex-col items-center w-25 shrink-0"
         >
           <div class="h-28"></div> 
           <div class="relative w-full flex items-center justify-start shrink-0">
-            <!-- Garis dari kiri ke kanan yang berhenti pas di tengah-tengah kontainer (50%) -->
             <div class="absolute left-0 w-1/2 h-px bg-black"></div>
-            <!-- Tombol panah-->
             <button 
               @click="showNextData"
               class="relative z-10 flex items-center justify-center w-8 h-8 mx-auto rounded-full bg-black text-white hover:bg-gray-800 transition-transform hover:scale-110 active:scale-95 shadow-md font-bold text-lg"
@@ -76,7 +74,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const { data: educationList } = await useFetch('/api/education')
+const { data: educationList } = await useFetch('/api/education', {
+  default: () => []
+})
 
 // menampilkan 1 data pertama
 const visibleCount = ref(1)
@@ -86,7 +86,7 @@ const displayedEducation = computed(() => {
 
 // Fungsi untuk menambah data yang tampil saat panah diklik
 const showNextData = () => {
-  if (visibleCount.value < educationList.value.length) {
+  if (educationList.value && visibleCount.value < educationList.value.length) {
     visibleCount.value++
   }
 }

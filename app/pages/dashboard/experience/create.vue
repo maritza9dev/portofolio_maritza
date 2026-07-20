@@ -5,6 +5,9 @@ definePageMeta({
 })
 
 const typeOptions = ['FullTime', 'Internship', 'Training']
+const isSaving = ref(false)
+const isUploading = ref(false)
+const toast = useToast()
 
 const form = reactive({
   type: '',
@@ -17,8 +20,11 @@ const form = reactive({
   is_current: false,
 })
 
-const isSaving = ref(false)
-const toast = useToast()
+watch(() => form.is_current, (newVal) => {
+  if (newVal) {
+    form.year_end = ''
+  }
+})
 
 function cleanForm(data) {
   const cleaned = { ...data }
@@ -31,6 +37,11 @@ function cleanForm(data) {
 }
 
 async function handleSubmit() {
+  if (isUploading.value) {
+    toast.add({ title: 'Please wait, document is still uploading!', color: 'warning' })
+    return
+  }
+
   if (!form.type || !form.title || !form.institution || !form.year_start || !form.certificate) {
     toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
@@ -45,6 +56,7 @@ async function handleSubmit() {
     toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/experience')
   } catch (error) {
+    console.error('Error saving experience:', error)
     toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
@@ -55,16 +67,25 @@ async function handleDocumentUpload(event) {
   const file = event.target.files[0]
   if (!file) return
 
+  isUploading.value = true
   const uploadData = new FormData()
   uploadData.append('file', file)
   uploadData.append('folder', 'documents')
 
-  const result = await $fetch('/api/upload', {
-    method: 'POST',
-    body: uploadData,
-  })
+  try {
+    const result = await $fetch('/api/upload', {
+      method: 'POST',
+      body: uploadData,
+    })
 
-  form.certificate = result.path
+    form.certificate = result.path
+    toast.add({ title: 'Document uploaded successfully!', color: 'success' })
+  } catch (error) {
+    console.error('Document upload error:', error)
+    toast.add({ title: 'Failed to upload document', color: 'error' })
+  } finally {
+    isUploading.value = false
+  }
 }
 </script>
 
@@ -85,14 +106,14 @@ async function handleDocumentUpload(event) {
         </UFormField>
 
         <UFormField label="Title" required>
-          <UInput v-model="form.title" class="w-full" placeholder="PKL" />
+          <UInput v-model="form.title" class="w-full" placeholder="PKL / Software Engineer" />
         </UFormField>
 
         <UFormField label="Institution" required>
           <UInput v-model="form.institution" class="w-full" placeholder="PT..." />
         </UFormField>
 
-         <UFormField label="Description">
+        <UFormField label="Description">
           <UTextarea v-model="form.description" class="w-full" :rows="5" />
         </UFormField>
 
@@ -101,13 +122,15 @@ async function handleDocumentUpload(event) {
         </UFormField>
 
         <UFormField label="Year End">
-          <UInput v-model.number="form.year_end" type="number" class="w-full" />
+          <UInput v-model.number="form.year_end" type="number" class="w-full" :disabled="form.is_current" placeholder="Leave empty if current" />
         </UFormField>
 
         <UFormField label="Certificate (PDF)" required>
           <input type="file" accept=".pdf" @change="handleDocumentUpload"
           class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" />
-          <p v-if="form.document" class="text-sm text-gray-500 mt-1">{{ form.certificate }}</p>
+          <p v-if="form.certificate" class="text-sm text-green-600 mt-1 font-medium">
+            ✓ Uploaded: {{ form.certificate.split('/').pop() }}
+          </p>
         </UFormField>
 
         <UFormField label="Is Current?">

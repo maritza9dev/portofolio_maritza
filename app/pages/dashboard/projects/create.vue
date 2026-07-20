@@ -5,6 +5,9 @@ definePageMeta({
 })
 
 const techInput = ref('')
+const isSaving = ref(false)
+const isUploading = ref(false) 
+const toast = useToast()
 
 const form = reactive({
   name_p: '',
@@ -15,9 +18,6 @@ const form = reactive({
   link_github: '',
   projectDate: '',
 })
-
-const isSaving = ref(false)
-const toast = useToast()
 
 function cleanForm(data) {
   const cleaned = { ...data }
@@ -30,23 +30,30 @@ function cleanForm(data) {
 }
 
 async function handleSubmit() {
-  if (!form.name_p || !form.role || !techInput.value || !form.projectDate || !form.image) {
+  if (isUploading.value) {
+    toast.add({ title: 'Please wait, image is still uploading!', color: 'warning' })
+    return
+  }
+
+  if (!form.name_p || !form.role || !techInput.value.trim() || !form.projectDate || !form.image) {
     toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
   }
 
   isSaving.value = true
   try {
-    form.tech = techInput.value.split(',').map((t) => t.trim())
+    form.tech = techInput.value.split(',').map((t) => t.trim()).filter(Boolean)
 
     await $fetch('/api/projects', {
       method: 'POST',
       body: cleanForm(form),
     })
+    
     toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/projects')
   } catch (error) {
-    toast.add({ title: 'Failed to save', color: 'error' })
+    console.error('Error saving project:', error)
+    toast.add({ title: 'Failed to save project data', color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -56,16 +63,25 @@ async function handleImageUpload(event) {
   const file = event.target.files[0]
   if (!file) return
 
+  isUploading.value = true
   const uploadData = new FormData()
   uploadData.append('file', file)
   uploadData.append('folder', 'images')
 
-  const result = await $fetch('/api/upload', {
-    method: 'POST',
-    body: uploadData,
-  })
+  try {
+    const result = await $fetch('/api/upload', {
+      method: 'POST',
+      body: uploadData,
+    })
 
-  form.image = result.path
+    form.image = result.path
+    toast.add({ title: 'Image uploaded successfully!', color: 'success' })
+  } catch (error) {
+    console.error('Upload error:', error)
+    toast.add({ title: 'Failed to upload image', color: 'error' })
+  } finally {
+    isUploading.value = false
+  }
 }
 </script>
 
