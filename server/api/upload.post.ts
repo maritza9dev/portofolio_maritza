@@ -1,5 +1,13 @@
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('SUPABASE_URL atau SUPABASE_SERVICE_KEY belum di-set di .env')
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
@@ -18,11 +26,21 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'File tidak ditemukan' })
   }
 
-  const uploadDir = path.join(process.cwd(), 'public', folder)
-  await mkdir(uploadDir, { recursive: true })
-
   const filename = `${Date.now()}-${fileEntry.filename}`
-  await writeFile(path.join(uploadDir, filename), fileEntry.data)
 
-  return { path: `/${folder}/${filename}` }
+  const { error } = await supabase.storage
+    .from(folder)
+    .upload(filename, fileEntry.data, {
+      contentType: fileEntry.type,
+    })
+
+  if (error) {
+    throw createError({ statusCode: 500, statusMessage: error.message })
+  }
+
+  const { data: publicUrlData } = supabase.storage
+    .from(folder)
+    .getPublicUrl(filename)
+
+  return { path: publicUrlData.publicUrl }
 })
