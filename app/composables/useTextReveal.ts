@@ -13,7 +13,7 @@ export function useTextReveal(target: Ref<HTMLElement | null>) {
     if (!target.value) return;
 
     split = new SplitType(target.value, {
-      types: "chars",
+      types: "words,chars",
     });
 
     gsap.set(split.chars, {
@@ -38,7 +38,7 @@ export function useTextReveal(target: Ref<HTMLElement | null>) {
     })
 
       // jeda untuk dibaca
-      .to({}, { duration: 6 })
+      .to({}, { duration: 15})
 
       // animasi balik
       .to(split.chars, {
