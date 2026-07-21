@@ -9,7 +9,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
   global: {
-    fetch: (...args) => fetch(...args),
+    fetch: (...args) => globalThis.fetch(...args),
   },
 })
 
