@@ -26,7 +26,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'File tidak ditemukan' })
   }
 
-  const filename = `${Date.now()}-${fileEntry.filename}`
+  function sanitizeFilename(filename: string) {
+  return filename
+    .replace(/[^a-zA-Z0-9.\-_]/g, '-')
+    .replace(/-+/g, '-')
+  }
+
+  const filename = `${Date.now()}-${sanitizeFilename(fileEntry.filename || 'file')}`
 
   const { error } = await supabase.storage
     .from(folder)

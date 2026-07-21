@@ -26,6 +26,7 @@ watchEffect(() => {
 })
 
 const isSaving = ref(false)
+const isUploading = ref(false)
 const toast = useToast()
 
 function cleanForm(data) {
@@ -104,7 +105,7 @@ async function handleDocumentUpload(event) {
     })
 
     const docPath = result.path || result.url
-    form.certificate = docPath.startsWith('http') || docPath.startsWith('/')
+    form.document = docPath.startsWith('http') || docPath.startsWith('/')
       ? docPath
       : `/${docPath}`
 
