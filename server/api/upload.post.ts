@@ -7,7 +7,11 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error('SUPABASE_URL atau SUPABASE_SERVICE_KEY belum di-set di .env')
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  global: {
+    fetch: (...args) => fetch(...args),
+  },
+})
 
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
