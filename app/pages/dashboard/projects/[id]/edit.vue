@@ -14,7 +14,8 @@ const { data: project } = await useFetch(`/api/projects`, {
 const form = reactive({
   name_p: '',
   description: '',
-  tech: '',
+  role: '', 
+  tech: [],
   image: '',
   link_github: '',
   projectDate: '',
@@ -22,14 +23,14 @@ const form = reactive({
 
 watchEffect(() => {
   if (project.value) {
-    form.name_p = project.value.name_p
-    form.description = project.value.description
-    form.role = project.value.role
-    form.tech = project.value.tech
-    form.image = project.value.image
-    form.link_github = project.value.link_github
-    form.projectDate = project.value.projectDate
-    techInput.value = project.value.tech?.join(', ') || ''
+    form.name_p = project.value.name_p || ''
+    form.description = project.value.description || ''
+    form.role = project.value.role || ''
+    form.tech = project.value.tech || []
+    form.image = project.value.image || ''
+    form.link_github = project.value.link_github || ''
+    form.projectDate = project.value.projectDate || ''
+    techInput.value = Array.isArray(project.value.tech) ? project.value.tech.join(', ') : (project.value.tech || '')
   }
 })
 
@@ -39,7 +40,7 @@ const toast = useToast()
 function cleanForm(data) {
   const cleaned = { ...data }
   for (const key in cleaned) {
-    if (cleaned[key] === '') {
+    if (cleaned[key] === '' || cleaned[key] === undefined) {
       cleaned[key] = null
     }
   }
@@ -53,7 +54,9 @@ async function handleSubmit() {
   }
   isSaving.value = true
   try {
-    form.tech = techInput.value.split(',').map((t) => t.trim())
+    form.tech = techInput.value.split(',').map((t) => t.trim()).filter(Boolean)
+    form.projectDate = Number(form.projectDate)
+
     await $fetch(`/api/projects/${id}`, {
       method: 'PUT',
       body: cleanForm(form),
@@ -61,6 +64,7 @@ async function handleSubmit() {
     toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/projects')
   } catch (error) {
+    console.error('Error updating project:', error)
     toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
@@ -75,12 +79,19 @@ async function handleImageUpload(event) {
   uploadData.append('file', file)
   uploadData.append('folder', 'images')
 
-  const result = await $fetch('/api/upload', {
-    method: 'POST',
-    body: uploadData,
-  })
+  try {
+    const result = await $fetch('/api/upload', {
+      method: 'POST',
+      body: uploadData,
+    })
 
-  form.image = result.path
+    const imagePath = result.path || result.url
+    form.image = imagePath.startsWith('http') || imagePath.startsWith('/') 
+      ? imagePath 
+      : `/${imagePath}`
+  } catch (err) {
+    toast.add({ title: 'Failed to upload image', color: 'error' })
+  }
 }
 </script>
 

@@ -57,12 +57,21 @@ async function handleImageUpload(event) {
   uploadData.append('file', file)
   uploadData.append('folder', 'images')
 
-  const result = await $fetch('/api/upload', {
-    method: 'POST',
-    body: uploadData,
-  })
+  try {
+    const result = await $fetch('/api/upload', {
+      method: 'POST',
+      body: uploadData,
+    })
 
-  form.image = result.path
+    const imagePath = result.path || result.url
+    form.image = imagePath.startsWith('http') || imagePath.startsWith('/') 
+      ? imagePath 
+      : `/${imagePath}`
+      
+    toast.add({ title: 'Image uploaded successfully!', color: 'success' })
+  } catch (error) {
+    toast.add({ title: 'Failed to upload image', color: 'error' })
+  }
 }
 </script>
 

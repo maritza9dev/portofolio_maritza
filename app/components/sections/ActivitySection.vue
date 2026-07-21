@@ -37,7 +37,6 @@
             <a
               v-if="act.image"
               :href="act.image"
-              target="_blank"
               class="inline-block border-2 border-black rounded-full px-5 py-2 text-sm font-medium hover:bg-black hover:text-white transition-colors self-start md:self-center bg-white"
             >
               View

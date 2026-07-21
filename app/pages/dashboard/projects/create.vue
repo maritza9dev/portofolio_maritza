@@ -22,7 +22,7 @@ const form = reactive({
 function cleanForm(data) {
   const cleaned = { ...data }
   for (const key in cleaned) {
-    if (cleaned[key] === '') {
+    if (cleaned[key] === '' || cleaned[key] === undefined) {
       cleaned[key] = null
     }
   }
@@ -43,6 +43,7 @@ async function handleSubmit() {
   isSaving.value = true
   try {
     form.tech = techInput.value.split(',').map((t) => t.trim()).filter(Boolean)
+    form.projectDate = Number(form.projectDate) // Pastikan dikirim sebagai Int ke Prisma
 
     await $fetch('/api/projects', {
       method: 'POST',
@@ -74,7 +75,11 @@ async function handleImageUpload(event) {
       body: uploadData,
     })
 
-    form.image = result.path
+    const imagePath = result.path || result.url
+    form.image = imagePath.startsWith('http') || imagePath.startsWith('/') 
+      ? imagePath 
+      : `/${imagePath}`
+
     toast.add({ title: 'Image uploaded successfully!', color: 'success' })
   } catch (error) {
     console.error('Upload error:', error)
@@ -114,13 +119,13 @@ async function handleImageUpload(event) {
         </UFormField>
 
         <UFormField label="Project Year" required>
-          <UInput v-model.number="form.projectDate" type="number" class="w-full" />
+          <UInput v-model.number="form.projectDate" type="number" class="w-full" placeholder="2026" />
         </UFormField>
 
         <UFormField label="Image Project" required>
           <input type="file" accept="image/*" @change="handleImageUpload"
           class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" />
-          <img v-if="form.image" :src="form.image" class="mt-2 w-24 h-24 object-cover rounded-lg" />
+          <img v-if="form.image" :src="form.image" class="mt-2 w-24 h-24 object-cover rounded-lg border" />
         </UFormField>
 
         <UFormField label="Link Github">

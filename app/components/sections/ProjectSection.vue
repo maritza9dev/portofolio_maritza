@@ -29,7 +29,7 @@
           <div class="p-6">
             <div class="flex justify-between items-center mb-2">
               <p class="font-bold text-lg text-black">{{ project.name_p }}</p>
-              <span class="text-xs text-gray-400 font-medium">{{ project.year }}</span>
+              <span class="text-xs text-gray-400 font-medium">{{ project.projectDate }}</span>
             </div>
 
             <p class="text-sm text-gray-500 mb-3 font-medium">{{ project.role }}</p>
@@ -47,14 +47,23 @@
               </span>
             </div>
 
-            <a
-              v-if="project.link_github"
-              :href="project.link_github"
-              target="_blank"
-              class="block text-center border-2 border-black rounded-full px-4 py-2 text-sm font-semibold hover:bg-black hover:text-white transition-colors duration-300"
-            >
-              View Github
-            </a>
+            <div class="flex items-center gap-3">
+              <a
+                v-if="project.link_github"
+                :href="formatPath(project.link_github)"
+                target="_blank"
+                class="flex-1 text-center border-2 border-black rounded-full px-4 py-2 text-sm font-semibold hover:bg-black hover:text-white transition-colors duration-300"
+              >
+                View
+              </a>
+
+              <NuxtLink
+                :to="`/projects/${project.id}`"
+                class="flex-1 text-center border-2 border-black rounded-full px-4 py-2 text-sm font-semibold hover:bg-black hover:text-white transition-colors duration-300"
+              >
+                Detail
+              </NuxtLink>
+            </div>
           </div>
         </div>
       </div>
@@ -66,7 +75,13 @@
 import { ref, reactive, onMounted, onBeforeUpdate } from 'vue'
 
 const { data: projectsList } = await useFetch('/api/projects')
-
+function formatPath(path) {
+  if (!path) return ''
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/')) {
+    return path
+  }
+  return `/${path}`
+}
 const sliderContainer = ref(null)
 const cardRefs = ref([])
 const cardStyles = reactive([])

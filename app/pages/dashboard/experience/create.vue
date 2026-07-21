@@ -53,7 +53,7 @@ async function handleSubmit() {
       method: 'POST',
       body: cleanForm(form),
     })
-    toast.add({ title: 'Save successfully!', color: 'success' })
+    toast.add({ title: 'Saved successfully!', color: 'success' })
     await navigateTo('/dashboard/experience')
   } catch (error) {
     console.error('Error saving experience:', error)
@@ -78,7 +78,11 @@ async function handleDocumentUpload(event) {
       body: uploadData,
     })
 
-    form.certificate = result.path
+    const docPath = result.path || result.url
+    form.certificate = docPath.startsWith('http') || docPath.startsWith('/')
+      ? docPath
+      : `/${docPath}`
+
     toast.add({ title: 'Document uploaded successfully!', color: 'success' })
   } catch (error) {
     console.error('Document upload error:', error)
@@ -106,11 +110,11 @@ async function handleDocumentUpload(event) {
         </UFormField>
 
         <UFormField label="Title" required>
-          <UInput v-model="form.title" class="w-full" placeholder="PKL / Software Engineer" />
+          <UInput v-model="form.title" class="w-full" placeholder="Software Engineer / PKL" />
         </UFormField>
 
         <UFormField label="Institution" required>
-          <UInput v-model="form.institution" class="w-full" placeholder="PT..." />
+          <UInput v-model="form.institution" class="w-full" placeholder="PT / Instansi..." />
         </UFormField>
 
         <UFormField label="Description">
@@ -126,9 +130,16 @@ async function handleDocumentUpload(event) {
         </UFormField>
 
         <UFormField label="Certificate (PDF)" required>
-          <input type="file" accept=".pdf" @change="handleDocumentUpload"
-          class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" />
-          <p v-if="form.certificate" class="text-sm text-green-600 mt-1 font-medium">
+          <input 
+            type="file" 
+            accept=".pdf" 
+            @change="handleDocumentUpload"
+            class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" 
+          />
+          <p v-if="isUploading" class="text-sm text-yellow-600 mt-1 font-medium animate-pulse">
+            Uploading PDF...
+          </p>
+          <p v-else-if="form.certificate" class="text-sm text-green-600 mt-1 font-medium">
             ✓ Uploaded: {{ form.certificate.split('/').pop() }}
           </p>
         </UFormField>
@@ -138,7 +149,7 @@ async function handleDocumentUpload(event) {
         </UFormField>
 
         <div class="flex gap-3">
-          <UButton type="submit" :loading="isSaving">Save As</UButton>
+          <UButton type="submit" :loading="isSaving" :disabled="isUploading">Save As</UButton>
           <UButton to="/dashboard/experience" color="neutral" variant="outline">Cancel</UButton>
         </div>
       </form>

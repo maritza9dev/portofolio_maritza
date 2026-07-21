@@ -24,20 +24,27 @@ const form = reactive({
   is_current: false,
 })
 
-watchEffect(() => {
-  if (experience.value) {
-    form.type = experience.value.type
-    form.title = experience.value.title
-    form.institution = experience.value.institution
-    form.description = experience.value.description
-    form.year_start = experience.value.year_start
-    form.year_end = experience.value.year_end
-    form.certificate = experience.value.certificate
-    form.is_current = experience.value.is_current
+watch(experience, (newVal) => {
+  if (newVal) {
+    form.type = newVal.type ?? ''
+    form.title = newVal.title ?? ''
+    form.institution = newVal.institution ?? ''
+    form.description = newVal.description ?? ''
+    form.year_start = newVal.year_start ?? ''
+    form.year_end = newVal.year_end ?? ''
+    form.certificate = newVal.certificate ?? ''
+    form.is_current = Boolean(newVal.is_current)
+  }
+}, { immediate: true })
+
+watch(() => form.is_current, (newVal) => {
+  if (newVal) {
+    form.year_end = ''
   }
 })
 
 const isSaving = ref(false)
+const isUploading = ref(false)
 const toast = useToast()
 
 function cleanForm(data) {
@@ -51,6 +58,11 @@ function cleanForm(data) {
 }
 
 async function handleSubmit() {
+  if (isUploading.value) {
+    toast.add({ title: 'Please wait, document is still uploading!', color: 'warning' })
+    return
+  }
+
   if (!form.type || !form.title || !form.institution || !form.year_start || !form.certificate) {
     toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
@@ -62,9 +74,10 @@ async function handleSubmit() {
       method: 'PUT',
       body: cleanForm(form),
     })
-    toast.add({ title: 'Save successfully!', color: 'success' })
+    toast.add({ title: 'Saved successfully!', color: 'success' })
     await navigateTo('/dashboard/experience')
   } catch (error) {
+    console.error('Error updating experience:', error)
     toast.add({ title: 'Failed to save', color: 'error' })
   } finally {
     isSaving.value = false
@@ -75,16 +88,29 @@ async function handleDocumentUpload(event) {
   const file = event.target.files[0]
   if (!file) return
 
+  isUploading.value = true
   const uploadData = new FormData()
   uploadData.append('file', file)
   uploadData.append('folder', 'documents')
 
-  const result = await $fetch('/api/upload', {
-    method: 'POST',
-    body: uploadData,
-  })
+  try {
+    const result = await $fetch('/api/upload', {
+      method: 'POST',
+      body: uploadData,
+    })
 
-  form.certificate = result.path
+    const docPath = result.path || result.url
+    form.certificate = docPath.startsWith('http') || docPath.startsWith('/')
+      ? docPath
+      : `/${docPath}`
+
+    toast.add({ title: 'Document uploaded successfully!', color: 'success' })
+  } catch (error) {
+    console.error('Document upload error:', error)
+    toast.add({ title: 'Failed to upload document', color: 'error' })
+  } finally {
+    isUploading.value = false
+  }
 }
 </script>
 
@@ -100,20 +126,19 @@ async function handleDocumentUpload(event) {
 
     <template #body>
       <form @submit.prevent="handleSubmit" class="w-full flex flex-col gap-4">
-
         <UFormField label="Type" required>
           <USelect v-model="form.type" :items="typeOptions" class="w-full" placeholder="Select type" />
         </UFormField>
 
         <UFormField label="Title" required>
-          <UInput v-model="form.title" class="w-full" placeholder="PKL" />
+          <UInput v-model="form.title" class="w-full" placeholder="Software Engineer / PKL" />
         </UFormField>
 
         <UFormField label="Institution" required>
-          <UInput v-model="form.institution" class="w-full" placeholder="PT..." />
+          <UInput v-model="form.institution" class="w-full" placeholder="PT / Instansi..." />
         </UFormField>
 
-         <UFormField label="Description">
+        <UFormField label="Description">
           <UTextarea v-model="form.description" class="w-full" :rows="5" />
         </UFormField>
 
@@ -122,13 +147,22 @@ async function handleDocumentUpload(event) {
         </UFormField>
 
         <UFormField label="Year End">
-          <UInput v-model.number="form.year_end" type="number" class="w-full" />
+          <UInput v-model.number="form.year_end" type="number" class="w-full" :disabled="form.is_current" placeholder="Leave empty if current" />
         </UFormField>
 
         <UFormField label="Certificate (PDF)" required>
-          <input type="file" accept=".pdf" @change="handleDocumentUpload"
-          class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" />
-          <p v-if="form.certificate" class="text-sm text-gray-500 mt-1">{{ form.certificate }}</p>
+          <input 
+            type="file" 
+            accept=".pdf" 
+            @change="handleDocumentUpload"
+            class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" 
+          />
+          <p v-if="isUploading" class="text-sm text-yellow-600 mt-1 font-medium animate-pulse">
+            Uploading PDF...
+          </p>
+          <p v-else-if="form.certificate" class="text-sm text-green-600 mt-1 font-medium">
+            ✓ Existing Certificate: {{ form.certificate.split('/').pop() }}
+          </p>
         </UFormField>
 
         <UFormField label="Is Current?">
@@ -136,7 +170,7 @@ async function handleDocumentUpload(event) {
         </UFormField>
 
         <div class="flex gap-3">
-          <UButton type="submit" :loading="isSaving">Save Changes</UButton>
+          <UButton type="submit" :loading="isSaving" :disabled="isUploading">Save Changes</UButton>
           <UButton to="/dashboard/experience" color="neutral" variant="outline">Cancel</UButton>
         </div>
       </form>
