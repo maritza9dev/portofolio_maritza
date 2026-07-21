@@ -9,8 +9,8 @@ const form = reactive({
   title: '',
   position: '',
   description: '',
-  year_start: '',
-  year_end: '',
+  year_start: null,
+  year_end: null,
   image: '',
   is_current: false,
 })
@@ -29,17 +29,21 @@ function cleanForm(data) {
 }
 
 async function handleSubmit() {
-  if (!form.type || !form.title || !form.position || !form.year_start ) {
+  if (!form.type || !form.title || !form.position || !form.year_start) {
     toast.add({ title: 'Please complete all required fields!', color: 'error' })
     return
   }
 
   isSaving.value = true
   try {
+    const payload = cleanForm(form)
+    console.log('Payload yang dikirim ke database:', payload)
+
     await $fetch(`/api/activity`, {
       method: 'POST',
-      body: cleanForm(form),
+      body: payload,
     })
+    
     toast.add({ title: 'Save successfully!', color: 'success' })
     await navigateTo('/dashboard/activity')
   } catch (error) {
@@ -55,7 +59,7 @@ async function handleImageUpload(event) {
 
   const uploadData = new FormData()
   uploadData.append('file', file)
-  uploadData.append('folder', 'images')
+  uploadData.append('folder', 'images') 
 
   try {
     const result = await $fetch('/api/upload', {
@@ -64,12 +68,11 @@ async function handleImageUpload(event) {
     })
 
     const imagePath = result.path || result.url
-    form.image = imagePath.startsWith('http') || imagePath.startsWith('/') 
-      ? imagePath 
-      : `/${imagePath}`
-      
+    form.image = imagePath
+
     toast.add({ title: 'Image uploaded successfully!', color: 'success' })
   } catch (error) {
+    console.error('Upload Error:', error)
     toast.add({ title: 'Failed to upload image', color: 'error' })
   }
 }
@@ -99,7 +102,7 @@ async function handleImageUpload(event) {
           <UInput v-model="form.position" class="w-full" placeholder="Leader.." />
         </UFormField>
 
-         <UFormField label="Description">
+        <UFormField label="Description">
           <UTextarea v-model="form.description" class="w-full" :rows="5" />
         </UFormField>
 
@@ -112,9 +115,17 @@ async function handleImageUpload(event) {
         </UFormField>
 
         <UFormField label="Image">
-          <input type="file" accept="image/*" @change="handleImageUpload"
-           class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented" />
-          <img v-if="form.image" :src="form.image" class="mt-2 w-24 h-24 object-cover rounded-lg" />
+          <input 
+            type="file" 
+            accept="image/*" 
+            @change="handleImageUpload"
+            class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-elevated file:text-sm file:font-medium hover:file:bg-accented cursor-pointer" 
+          />
+          
+          <div v-if="form.image" class="mt-2 flex items-center gap-3">
+            <img :src="form.image" class="w-24 h-24 object-cover rounded-lg border border-gray-200" />
+            <p class="text-xs text-green-600 font-medium">Ready to save!</p>
+          </div>
         </UFormField>
 
         <UFormField label="Is Current?">
@@ -122,7 +133,7 @@ async function handleImageUpload(event) {
         </UFormField>
 
         <div class="flex gap-3">
-          <UButton type="submit" :loading="isSaving">Save As</UButton>
+          <UButton type="submit" :loading="isSaving">Save</UButton>
           <UButton to="/dashboard/activity" color="neutral" variant="outline">Cancel</UButton>
         </div>
       </form>

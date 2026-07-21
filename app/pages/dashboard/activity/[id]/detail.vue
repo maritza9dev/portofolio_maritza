@@ -24,11 +24,14 @@ const { data: activity } = await useFetch('/api/activity', {
 
     <template #body>
       <div v-if="activity" class="max-w-2xl flex flex-col gap-5">
-        <img
-          v-if="activity.image"
-          :src="activity.image" 
-          class="w-full h-56 object-cover rounded-lg"
-        />
+        <div v-if="activity.image" class="w-full flex justify-start">
+          <img
+            :src="activity.image" 
+            alt="Activity Image"
+            class="max-w-full max-h-125 w-auto h-auto object-contain rounded-lg border border-gray-100 dark:border-gray-800"
+          />
+        </div>
+
         <div>
           <p class="text-sm text-gray-500">Type</p>
           <p class="font-bold text-lg">{{ activity.type }}</p>
@@ -46,7 +49,7 @@ const { data: activity } = await useFetch('/api/activity', {
 
         <div>
           <p class="text-sm text-gray-500">Description</p>
-          <p>{{ activity.description || '-' }}</p>
+          <p class="whitespace-pre-line">{{ activity.description || '-' }}</p>
         </div>
 
         <div>
@@ -54,19 +57,19 @@ const { data: activity } = await useFetch('/api/activity', {
           <p>{{ activity.year_start }}</p>
         </div>
 
-         <div>
+        <div>
           <p class="text-sm text-gray-500">Year End</p>
-          <p>{{ activity.year_end  || '-'}}</p>
+          <p>{{ activity.year_end || '-' }}</p>
         </div>
 
         <div>
-        <p class="text-sm text-gray-500">Status</p>
-        <UBadge :color="activity.is_current ? 'success' : 'neutral'" variant="soft">
+          <p class="text-sm text-gray-500">Status</p>
+          <UBadge :color="activity.is_current ? 'success' : 'neutral'" variant="soft">
             {{ activity.is_current ? 'Current' : 'Completed' }}
-        </UBadge>
+          </UBadge>
         </div>
 
-        <div class="flex gap-3">
+        <div class="flex gap-3 pt-2">
           <UButton :to="`/dashboard/activity/${id}/edit`" color="neutral" variant="outline">
             Edit
           </UButton>
