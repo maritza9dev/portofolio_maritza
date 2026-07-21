@@ -63,32 +63,58 @@ async function handleImageUpload(event) {
   const file = event.target.files[0]
   if (!file) return
 
+  isUploading.value = true
   const uploadData = new FormData()
   uploadData.append('file', file)
   uploadData.append('folder', 'images')
 
-  const result = await $fetch('/api/upload', {
-    method: 'POST',
-    body: uploadData,
-  })
+  try {
+    const result = await $fetch('/api/upload', {
+      method: 'POST',
+      body: uploadData,
+    })
 
-  form.image = result.path
+    const imagePath = result.path || result.url
+    form.image = imagePath.startsWith('http') || imagePath.startsWith('/') 
+      ? imagePath 
+      : `/${imagePath}`
+
+    toast.add({ title: 'Image uploaded successfully!', color: 'success' })
+  } catch (error) {
+    console.error('Upload error:', error)
+    toast.add({ title: 'Failed to upload image', color: 'error' })
+  } finally {
+    isUploading.value = false
+  }
 }
 
 async function handleDocumentUpload(event) {
   const file = event.target.files[0]
   if (!file) return
 
+  isUploading.value = true
   const uploadData = new FormData()
   uploadData.append('file', file)
   uploadData.append('folder', 'documents')
 
-  const result = await $fetch('/api/upload', {
-    method: 'POST',
-    body: uploadData,
-  })
+  try {
+    const result = await $fetch('/api/upload', {
+      method: 'POST',
+      body: uploadData,
+    })
 
-  form.document = result.path
+    const docPath = result.path || result.url
+    form.certificate = docPath.startsWith('http') || docPath.startsWith('/')
+      ? docPath
+      : `/${docPath}`
+
+    toast.add({ title: 'Document uploaded successfully!', color: 'success' })
+  } catch (error) {
+    console.error('Document upload error:', error)
+    toast.add({ title: 'Failed to upload document', color: 'error' })
+  } finally {
+    isUploading.value = false
+  }
 }
 </script>
 
