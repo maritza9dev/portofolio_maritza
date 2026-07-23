@@ -1,21 +1,18 @@
 <template>
   <footer class="bg-pink-100 px-8 md:px-16 py-12">
-    <!-- Container Utama: Kiri & Kanan -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8 border-b border-black/10 pb-8">
       
-      <!-- Bagian Kiri: Logo, Nama, dan Kalimat Keterangan Freelance -->
       <div class="flex flex-col gap-3 max-w-xl">
         <div class="flex items-center gap-2">
           <img src="/images/logo_m.png" alt="Logo Maritza" class="w-12 h-12" />
           <p class="font-serif text-xl font-semibold">Maritza</p>
         </div>
-        <!-- Teks Tambahan Freelance Hardcoded -->
+  
         <p class="text-sm text-gray-700 leading-relaxed">
-          Mari ubah ide kreatif kita menjadi aplikasi web yang interaktif dan responsif. Saya terbuka untuk proyek freelance, kolaborasi tim, maupun peluang baru di berbagai bidang IT, baik dalam pengembangan sistem, analisis data, hingga manajemen proyek. Punya proyek seru? Ayo hubungi saya melalui salah satu saluran kontak yang tersedia di samping!
+          Mari ubah ide kreatif kita menjadi aplikasi web yang interaktif dan responsif. Saya terbuka untuk proyek freelance, kolaborasi tim, maupun peluang baru di berbagai bidang IT, baik dalam pengembangan sistem, analisis data, hingga manajemen proyek. Punya proyek seru? Ayo hubungi saya melalui salah satu saluran kontak yang tersedia!
         </p>
       </div>
 
-      <!-- Bagian Kanan: List Icon Contact -->
       <div class="flex gap-4 flex-wrap">
         <a 
           v-for="contact in contactList"
